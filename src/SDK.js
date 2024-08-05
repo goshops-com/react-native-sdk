@@ -20,7 +20,7 @@ class SDK {
 
     async addInteraction(interactionName, data) {
         const interactionData = {
-            name: interactionName,
+            event: interactionName,
             ...data
         };
         return ApiService.post('/interaction', interactionData);
