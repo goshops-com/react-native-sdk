@@ -1,5 +1,7 @@
 import ApiService from "./ApiService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import "react-native-get-random-values";
+import { v4 as uuidv4 } from "uuid";
 
 class SDK {
 	async init(clientId, clientSecret) {
@@ -56,6 +58,27 @@ class SDK {
 		} catch (error) {
 			console.error("Failed to add interaction:", error);
 			throw new Error("Failed to add interaction");
+		}
+	}
+
+	async addInteractionState(state, options = {}) {
+		try {
+			options.transactionId = uuidv4();
+			return await ApiService.post(`/interaction/state/${state}`, options);
+		} catch (error) {
+			console.error("Failed to add interaction state:", error);
+			throw new Error("Failed to add interaction state");
+		}
+	}
+
+	async openImpression(impressionId) {
+		try {
+			await ApiService.patch(`/personal/impression/${impressionId}`, {
+				status: "opened",
+			});
+		} catch (error) {
+			console.error("Failed to open impression content:", error);
+			throw new Error("Failed to open impression content");
 		}
 	}
 }
