@@ -29,7 +29,7 @@ jobs:
     - name: Get latest version from npm
       id: npm
       run: |
-        echo "NPM_VERSION=$(npm show ${{ github.event.repository.name }} version)" >> $GITHUB_ENV
+        echo "NPM_VERSION=$(npm show gopersonal-react-native-sdk version)" >> $GITHUB_ENV
 
     - name: Compare versions
       id: check_version
