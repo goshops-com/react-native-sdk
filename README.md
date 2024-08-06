@@ -1,7 +1,7 @@
 How to import it
 
 ```
-import SDK from './path/to/SDK';
+import SDK from 'gopersonal-react-native-sdk';
 
 // Initialize the SDK
 await SDK.init('BR-your-client-id', 'your-client-secret');
