@@ -9,6 +9,10 @@ class ApiService {
 	}
 
 	async init(clientId, clientSecret) {
+		const lastInitTime = await AsyncStorage.getItem("lastInitTime");
+		const currentTime = new Date().getTime();
+		const expirationTime = 24 * 60 * 60 * 1000; // 24 hours
+
 		const [region, secondPart] = clientId.split("-");
 		let baseURL;
 
@@ -45,8 +49,14 @@ class ApiService {
 			},
 		);
 
+		if (lastInitTime && currentTime - lastInitTime < expirationTime) {
+			return;
+		}
+
 		try {
 			await this.refreshToken(secondPart, clientSecret);
+
+			await AsyncStorage.setItem("lastInitTime", currentTime.toString());
 		} catch (error) {
 			console.error("Failed to initialize API service:", error);
 			throw new Error("Failed to initialize API service");
