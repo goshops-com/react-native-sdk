@@ -39,11 +39,14 @@ class SDK {
 	async getContent(contentId) {
 		try {
 			const response = await ApiService.post(`/personal/content/${contentId}`);
-
 			return response.data;
 		} catch (error) {
-			console.error("Failed to get content:", error);
-			throw new Error("Failed to get content");
+			if (error.response && error.response.status === 404) {
+				return null;
+			} else {
+				console.error("Failed to get content:", error);
+				return null;
+			}
 		}
 	}
 
