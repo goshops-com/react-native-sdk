@@ -26,7 +26,7 @@ class ApiService {
 
 		this.axiosInstance.interceptors.request.use(
 			async (config) => {
-				const token = await AsyncStorage.getItem("jwt");
+				const token = await AsyncStorage.getItem("goPersonalToken");
 				if (token) {
 					config.headers.Authorization = `Bearer ${token}`;
 				}
@@ -77,7 +77,7 @@ class ApiService {
 				gsVUID,
 			});
 			const token = response.data.token;
-			await AsyncStorage.setItem("jwt", token);
+			await AsyncStorage.setItem("goPersonalToken", token);
 		} catch (error) {
 			console.error("Failed to refresh token:", error);
 			throw error;

@@ -39,6 +39,7 @@ class SDK {
 				console.log(await AsyncStorage.getItem("gsVUID"));
 			}
 			await AsyncStorage.removeItem("gsVUID");
+			await AsyncStorage.removeItem("goPersonalToken");
 			const newGsVUID = uuidv4();
 			await AsyncStorage.setItem("gsVUID", newGsVUID);
 			if (options.debug) {
