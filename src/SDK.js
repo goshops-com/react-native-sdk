@@ -8,12 +8,10 @@ import { Platform, PermissionsAndroid } from "react-native";
 class SDK {
 	async init(clientId, clientSecret, options = {}) {
 		try {
-			const response = await ApiService.init(clientId, clientSecret);
+			await ApiService.init(clientId, clientSecret);
 			if (options.debug) {
-				console.log("SDK Token:", response.token);
-				console.log("SDK Session:", response.sessionId);
+				console.log("SDK initialized");
 			}
-			return response;
 		} catch (error) {
 			console.error("Error during SDK initialization:", error);
 		}
