@@ -3,7 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import "react-native-get-random-values";
 import { v4 as uuidv4 } from "uuid";
 import messaging from "@react-native-firebase/messaging";
-import { Platform } from "react-native";
+import { Platform, PermissionsAndroid } from "react-native";
 
 class SDK {
 	async init(clientId, clientSecret, options = {}) {
