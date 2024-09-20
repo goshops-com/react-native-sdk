@@ -17,15 +17,14 @@ class SDK {
 		}
 	}
 
-	async login(customerId, email, options = {}) {
+	async login(customerId, data = {}, options = {}) {
 		try {
 			if (typeof customerId !== "undefined") {
-				await ApiService.post("/channel/login", { customerId, email });
+				await ApiService.post("/channel/login", { customerId, ...data });
 				await AsyncStorage.setItem("gsVUID", customerId);
 			}
 			if (options.debug) {
-				console.log("customerId", customerId);
-				console.log("email", email);
+				console.log({ customerId, ...data });
 			}
 		} catch (error) {
 			console.error("Login failed:", error);
