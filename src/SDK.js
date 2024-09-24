@@ -147,7 +147,7 @@ class SDK {
 
 	async requestNotificationPermission(options = {}) {
 		try {
-			if (Platform.OS === "android" && Platform.Version >= 33) {
+			if (Platform.OS === "android" && Platform.Version >= 30) {
 				const postNotificationsAndroidStatus = await PermissionsAndroid.request(
 					PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
 				);
