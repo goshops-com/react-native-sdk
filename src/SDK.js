@@ -163,18 +163,16 @@ class SDK {
 				}
 				return false;
 			}
-			if (Platform.OS === "ios") {
-				const authStatus = await messaging().requestPermission();
-				const enabled =
-					authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-					authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+			const authStatus = await messaging().requestPermission();
+			const enabled =
+				authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+				authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
-				if (enabled) {
-					if (options.debug) {
-						console.log("Authorization status:", authStatus);
-					}
-					return true;
+			if (enabled) {
+				if (options.debug) {
+					console.log("Authorization status:", authStatus);
 				}
+				return true;
 			}
 			return false;
 		} catch (error) {
