@@ -30,7 +30,6 @@ const defaultConfig = {
       shadowRadius: 4,
       elevation: 5
     },
-    // ... other default styles
   },
   config: {
     minScore: 0,
