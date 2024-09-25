@@ -4,6 +4,7 @@ import "react-native-get-random-values";
 import { v4 as uuidv4 } from "uuid";
 import messaging from "@react-native-firebase/messaging";
 import { Platform, PermissionsAndroid } from "react-native";
+import { showSurveyModal } from "./ui/showSurveyModal";
 
 class SDK {
 	async init(clientId, clientSecret, options = {}) {
@@ -67,8 +68,44 @@ class SDK {
 	}
 
 	async getNPS(options = {}) {
-		return await this.getContent("nps", options);
+		try {
+		  const npsContent = await this.getContent("nps", options);
+	  
+		  let surveyOptions = { ...options };
+	  
+		  if (npsContent && npsContent.contentValue && npsContent.contentValue.json && npsContent.contentValue.json.data) {
+			const fetchedConfig = npsContent.contentValue.json.data;
+			surveyOptions = {
+			  ...surveyOptions,
+			  labels: { ...fetchedConfig.labels, ...options.labels },
+			  styles: { ...fetchedConfig.styles, ...options.styles },
+			  config: { ...fetchedConfig.config, ...options.config }
+			};
+		  }
+	  
+		  return new Promise((resolve, reject) => {
+			showSurveyModal({
+			  ...surveyOptions,
+			  onSubmit: (score, feedback) => {
+				if (surveyOptions.onSubmit) {
+				  surveyOptions.onSubmit(score, feedback);
+				}
+				resolve({ score, feedback });
+			  },
+			  onClose: () => {
+				if (surveyOptions.onClose) {
+				  surveyOptions.onClose();
+				}
+				resolve(null);
+			  },
+			});
+		  });
+		} catch (error) {
+		  console.error('Error in NPS process:', error);
+		  throw error;
+		}
 	}
+
 	async getContent(contentId, options = {}) {
 		try {
 			const response = await ApiService.post(`/personal/content/${contentId}`);
