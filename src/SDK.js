@@ -66,6 +66,9 @@ class SDK {
 		}
 	}
 
+	async getNPS(options = {}) {
+		return await this.getContent("nps", options);
+	}
 	async getContent(contentId, options = {}) {
 		try {
 			const response = await ApiService.post(`/personal/content/${contentId}`);
