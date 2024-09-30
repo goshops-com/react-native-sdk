@@ -108,7 +108,9 @@ class SDK {
 
 	async getContent(contentId, options = {}) {
 		try {
-			const response = await ApiService.post(`/personal/content/${contentId}`);
+			const queryParams = new URLSearchParams(options).toString();
+			const url = `/personal/content/${contentId}${queryParams ? `?${queryParams}` : ''}`;
+			const response = await ApiService.post(url);
 			if (options.debug) {
 				console.log("Content response:", response.data);
 			}
