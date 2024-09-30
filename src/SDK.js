@@ -106,7 +106,7 @@ class SDK {
 		}
 	}
 
-	async getContent(contentId, options = {}) {
+	async getContent(contentId, options = { itemAttributes: '*' }) {
 		try {
 			const queryParams = new URLSearchParams(options).toString();
 			const url = `/personal/content/${contentId}${queryParams ? `?${queryParams}` : ''}`;
