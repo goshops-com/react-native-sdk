@@ -103,6 +103,7 @@ class ApiService {
 	async delete(url, config = {}) {
 		return this.axiosInstance.delete(url, config);
 	}
+	
 }
 
 export default new ApiService();

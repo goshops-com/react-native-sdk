@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import messaging from "@react-native-firebase/messaging";
 import { Platform, PermissionsAndroid } from "react-native";
 import { showSurveyModal } from "./ui/showSurveyModal";
+import { isValidSearchTerm } from "./utils/searchUtils";
 
 class SDK {
 	async init(clientId, clientSecret, options = {}) {
@@ -270,6 +271,10 @@ class SDK {
 		} catch (error) {
 			console.error("Failed to send token to backend:", error);
 		}
+	}
+	
+	isValidSearchTerm(searchTerm) {
+		return isValidSearchTerm(searchTerm);
 	}
 }
 
