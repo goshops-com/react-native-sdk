@@ -70,47 +70,52 @@ class SDK {
 
 	async getNPS(options = {}) {
 		try {
-		  const npsContent = await this.getContent("nps", options);
-	  
-		  let surveyOptions = { ...options };
-	  
-		  if (npsContent && npsContent.contentValue && npsContent.contentValue.json && npsContent.contentValue.json.data) {
-			const fetchedConfig = npsContent.contentValue.json.data;
-			surveyOptions = {
-			  ...surveyOptions,
-			  labels: { ...fetchedConfig.labels, ...options.labels },
-			  styles: { ...fetchedConfig.styles, ...options.styles },
-			  config: { ...fetchedConfig.config, ...options.config }
-			};
-		  }
-	  
-		  return new Promise((resolve, reject) => {
-			showSurveyModal({
-			  ...surveyOptions,
-			  onSubmit: (score, feedback) => {
-				if (surveyOptions.onSubmit) {
-				  surveyOptions.onSubmit(score, feedback);
-				}
-				resolve({ score, feedback });
-			  },
-			  onClose: () => {
-				if (surveyOptions.onClose) {
-				  surveyOptions.onClose();
-				}
-				resolve(null);
-			  },
+			const npsContent = await this.getContent("nps", options);
+
+			let surveyOptions = { ...options };
+
+			if (
+				npsContent &&
+				npsContent.contentValue &&
+				npsContent.contentValue.json &&
+				npsContent.contentValue.json.data
+			) {
+				const fetchedConfig = npsContent.contentValue.json.data;
+				surveyOptions = {
+					...surveyOptions,
+					labels: { ...fetchedConfig.labels, ...options.labels },
+					styles: { ...fetchedConfig.styles, ...options.styles },
+					config: { ...fetchedConfig.config, ...options.config },
+				};
+			}
+
+			return new Promise((resolve, reject) => {
+				showSurveyModal({
+					...surveyOptions,
+					onSubmit: (score, feedback) => {
+						if (surveyOptions.onSubmit) {
+							surveyOptions.onSubmit(score, feedback);
+						}
+						resolve({ score, feedback });
+					},
+					onClose: () => {
+						if (surveyOptions.onClose) {
+							surveyOptions.onClose();
+						}
+						resolve(null);
+					},
+				});
 			});
-		  });
 		} catch (error) {
-		  console.error('Error in NPS process:', error);
-		  throw error;
+			console.error("Error in NPS process:", error);
+			throw error;
 		}
 	}
 
-	async getContent(contentId, options = { itemAttributes: '*' }) {
+	async getContent(contentId, options = { itemAttributes: "*" }) {
 		try {
 			const queryParams = new URLSearchParams(options).toString();
-			const url = `/personal/content/${contentId}${queryParams ? `?${queryParams}` : ''}`;
+			const url = `/personal/content/${contentId}${queryParams ? `?${queryParams}` : ""}`;
 			const response = await ApiService.post(url);
 			if (options.debug) {
 				console.log("Content response:", response.data);
@@ -144,7 +149,9 @@ class SDK {
 
 	async addInteractionState(state, options = {}) {
 		try {
-			options.transactionId = uuidv4();
+			if (!options.transactionId) {
+				options.transactionId = uuidv4();
+			}
 			const response = await ApiService.post(
 				`/interaction/state/${state}`,
 				options,
@@ -272,7 +279,7 @@ class SDK {
 			console.error("Failed to send token to backend:", error);
 		}
 	}
-	
+
 	isValidSearchTerm(searchTerm) {
 		return isValidSearchTerm(searchTerm);
 	}
