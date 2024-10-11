@@ -112,6 +112,31 @@ class SDK {
 		}
 	}
 
+	async getContentsByContext(pageType, options = { }) {
+		try {
+			const payload = {
+				"context": {
+				  "currentPage": {
+					"type": pageType
+				  }
+				}
+			}
+			const url = `personal/content-page?pageType=${pageType}&onlyLazyLoad=true&includeContentMetadata=true`;
+			const response = await ApiService.post(url, payload);
+			if (options.debug) {
+				console.log("Content response:", response.data);
+			}
+			return response.data;
+		} catch (error) {
+			if (error.response && error.response.status === 404) {
+				return null;
+			}
+			console.error("Failed to get content:", error);
+			return null;
+		}
+	}
+
+
 	async getContent(contentId, options = { itemAttributes: "*" }) {
 		try {
 			const queryParams = new URLSearchParams(options).toString();
