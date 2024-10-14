@@ -114,15 +114,8 @@ class SDK {
 
 	async getContentsByContext(pageType, options = { }) {
 		try {
-			const payload = {
-				"context": {
-				  "currentPage": {
-					"type": pageType
-				  }
-				}
-			}
-			const url = `personal/content-page?pageType=${pageType}&onlyLazyLoad=true&includeContentMetadata=true`;
-			const response = await ApiService.post(url, payload);
+			const url = `personal/content?pageType=${pageType}&includeContentMetadata=true`;
+			const response = await ApiService.get(url);
 			if (options.debug) {
 				console.log("Content response:", response.data);
 			}
