@@ -129,7 +129,10 @@ class SDK {
     }
   }
 
-  async getContent(contentId, options = { itemAttributes: "*" }) {
+  async getContent(
+    contentId,
+    options = { itemAttributes: "*", impressionStatus: "opened" }
+  ) {
     try {
       const queryParams = new URLSearchParams(options).toString();
       const url = `/personal/content/${contentId}${
