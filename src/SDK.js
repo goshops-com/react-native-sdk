@@ -220,36 +220,48 @@ class SDK {
   async requestNotificationPermission(options = {}) {
     try {
       if (Platform.OS === "android" && Platform.Version >= 33) {
-        const postNotificationsAndroidStatus = await PermissionsAndroid.request(
+        const postNotificationsAndroidStatus = await PermissionsAndroid.check(
           PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
         );
+
         if (options.debug) {
           console.log(
-            typeof Platform.Version,
-            postNotificationsAndroidStatus,
-            "androidStatus"
+            "Android notification permission status:",
+            postNotificationsAndroidStatus
           );
         }
-        if (postNotificationsAndroidStatus === "granted") {
-          return true;
+
+        if (!postNotificationsAndroidStatus) {
+          const requestStatus = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
+          );
+          return requestStatus === "granted";
         }
-        return false;
+
+        return postNotificationsAndroidStatus;
       }
-      const authStatus = await messaging().requestPermission();
+
+      const authStatus = await messaging().hasPermission();
       const enabled =
         authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
         authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
-      if (enabled) {
-        if (options.debug) {
-          console.log("Authorization status:", authStatus);
-        }
-        return true;
+      if (!enabled) {
+        const requestStatus = await messaging().requestPermission();
+        return (
+          requestStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+          requestStatus === messaging.AuthorizationStatus.PROVISIONAL
+        );
       }
-      return false;
+
+      if (options.debug) {
+        console.log("iOS notification permission status:", authStatus);
+      }
+
+      return enabled;
     } catch (error) {
-      console.error("Failed to request notification permission:", error);
-      throw new Error("Failed to request notification permission");
+      console.error("Failed to check/request notification permission:", error);
+      throw new Error("Failed to check/request notification permission");
     }
   }
 
