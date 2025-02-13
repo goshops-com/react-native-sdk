@@ -317,18 +317,38 @@ class SDK {
   async voiceSearch(file, options = {}) {
     try {
       const formData = new FormData();
-      formData.append("file", file);
-
-      const response = await ApiService.post("/item/voice-search", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+      formData.append("file", {
+        uri: Platform.OS === "ios" ? file.uri : "file://" + file.uri,
+        name: Platform.OS === "ios" ? "audioIOS.m4a" : "audioAndroid.mp3",
+        type: Platform.OS === "ios" ? "audio/m4a" : "audio/mp3",
       });
 
-      if (options.debug) {
-        console.log("Voice search response:", response.data);
+      const uploadResponse = await ApiService.post(
+        "/item/audio-upload",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      if (!uploadResponse?.data?.transcription?.text) {
+        throw new Error("No transcription available");
       }
-      return response.data;
+
+      const searchResponse = await ApiService.get(
+        `/item/search?query=${uploadResponse.data.transcription.text.toLowerCase()}&typeOverride=voice`
+      );
+
+      if (options.debug) {
+        console.log("Voice search response:", searchResponse.data);
+      }
+
+      return {
+        hits: searchResponse.data.hits,
+        query: uploadResponse.data.transcription.text,
+      };
     } catch (error) {
       console.error("Voice search failed:", error);
       throw new Error("Failed to perform voice search");
