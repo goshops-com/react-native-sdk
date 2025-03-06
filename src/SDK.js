@@ -131,14 +131,26 @@ class SDK {
 
   async getContent(
     contentId,
-    options = { itemAttributes: "*", impressionStatus: "opened" }
+    options = { itemAttributes: "*", impressionStatus: "opened", cache: 0 }
   ) {
     try {
       const queryParams = new URLSearchParams(options).toString();
-      const url = `/personal/content/${contentId}${
-        queryParams ? `?${queryParams}` : ""
-      }`;
-      const response = await ApiService.post(url);
+      let response;
+      const project = await AsyncStorage.getItem("project");
+
+      if (options.cache === 1) {
+        if (options.debug) {
+          console.log("Getting cached content");
+        }
+        const url = `/public/cached-content/${project}/${contentId}`;
+        response = await ApiService.get(url);
+      } else {
+        const url = `/personal/content/${contentId}${
+          queryParams ? `?${queryParams}` : ""
+        }`;
+        response = await ApiService.post(url);
+      }
+
       if (options.debug) {
         console.log("Content response:", response.data);
       }
