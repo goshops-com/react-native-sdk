@@ -78,7 +78,8 @@ class ApiService {
     try {
       let gsVUID = await AsyncStorage.getItem("gsVUID");
       if (!gsVUID) {
-        gsVUID = uuidv4();
+        const newGsVUID = uuidv4();
+        const gsVUID = `_gsVUUID_${newGsVUID}_${new Date().getTime()}`;
         await AsyncStorage.setItem("gsVUID", gsVUID);
       }
 
