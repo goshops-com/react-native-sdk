@@ -46,12 +46,12 @@ class ApiService {
       (response) => response,
       async (error) => {
         if (error.response && error.response.status === 401) {
-          const customerId = await AsyncStorage.getItem(GS_VUID_KEY);
-
           const { token, project } = await this.refreshToken(
             secondPart,
             clientSecret
           );
+
+          const customerId = await AsyncStorage.getItem(GS_VUID_KEY);
 
           if (customerId && !customerId.includes("gsVUUID")) {
             try {
