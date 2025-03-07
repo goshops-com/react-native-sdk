@@ -26,14 +26,18 @@ class ApiService {
 
     this.axiosInstance.interceptors.request.use(
       async (config) => {
-        const token = await AsyncStorage.getItem("goPersonalToken");
-        if (token) {
-          config.headers.Authorization = `Bearer ${token}`;
+        const isPublicCachedContent = config.url && config.url.includes('public/cached-content');
+        
+        if (!isPublicCachedContent) {
+          const token = await AsyncStorage.getItem("goPersonalToken");
+          if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+          }
         }
-
+        
         return config;
       },
-      (error) => Promise.reject(error)
+      (error) => Promise.reject(error),
     );
 
     this.axiosInstance.interceptors.response.use(
