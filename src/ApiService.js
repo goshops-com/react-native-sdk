@@ -26,28 +26,40 @@ class ApiService {
 
     this.axiosInstance.interceptors.request.use(
       async (config) => {
-        const isPublicCachedContent = config.url && config.url.includes('public/cached-content');
-        
+        const isPublicCachedContent =
+          config.url && config.url.includes("public/cached-content");
+
         if (!isPublicCachedContent) {
           const token = await AsyncStorage.getItem("goPersonalToken");
           if (token) {
             config.headers.Authorization = `Bearer ${token}`;
           }
         }
-        
+
         return config;
       },
-      (error) => Promise.reject(error),
+      (error) => Promise.reject(error)
     );
 
     this.axiosInstance.interceptors.response.use(
       (response) => response,
       async (error) => {
         if (error.response && error.response.status === 401) {
+          const customerId = await AsyncStorage.getItem("gsVUID");
+
           const { token, project } = await this.refreshToken(
             secondPart,
             clientSecret
           );
+
+          if (customerId && !customerId.includes("gsVUUID")) {
+            try {
+              await this.post("/channel/login", { customerId });
+            } catch (loginError) {
+              console.error("Re-login failed:", loginError);
+              throw loginError;
+            }
+          }
 
           return this.axiosInstance(error.config);
         }
