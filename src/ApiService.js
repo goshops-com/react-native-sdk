@@ -2,6 +2,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import "react-native-get-random-values";
 import { v4 as uuidv4 } from "uuid";
+import { GPTOKEN_KEY, GS_VUID_KEY, PROJECT_KEY } from "./utils/constants";
 
 class ApiService {
   constructor() {
@@ -30,7 +31,7 @@ class ApiService {
           config.url && config.url.includes("public/cached-content");
 
         if (!isPublicCachedContent) {
-          const token = await AsyncStorage.getItem("goPersonalToken");
+          const token = await AsyncStorage.getItem(GPTOKEN_KEY);
           if (token) {
             config.headers.Authorization = `Bearer ${token}`;
           }
@@ -45,7 +46,7 @@ class ApiService {
       (response) => response,
       async (error) => {
         if (error.response && error.response.status === 401) {
-          const customerId = await AsyncStorage.getItem("gsVUID");
+          const customerId = await AsyncStorage.getItem(GS_VUID_KEY);
 
           const { token, project } = await this.refreshToken(
             secondPart,
@@ -88,11 +89,11 @@ class ApiService {
 
   async refreshToken(clientId, clientSecret) {
     try {
-      let gsVUID = await AsyncStorage.getItem("gsVUID");
+      const gsVUID = await AsyncStorage.getItem(GS_VUID_KEY);
       if (!gsVUID) {
         const newGsVUID = uuidv4();
         const gsVUID = `_gsVUUID_${newGsVUID}_${new Date().getTime()}`;
-        await AsyncStorage.setItem("gsVUID", gsVUID);
+        await AsyncStorage.setItem(GS_VUID_KEY, gsVUID);
       }
 
       const response = await this.axiosInstance.post("/channel/init", {
@@ -101,8 +102,8 @@ class ApiService {
         gsVUID,
       });
       const { token, project } = response.data;
-      await AsyncStorage.setItem("goPersonalToken", token);
-      await AsyncStorage.setItem("project", project);
+      await AsyncStorage.setItem(GPTOKEN_KEY, token);
+      await AsyncStorage.setItem(PROJECT_KEY, project);
       return { token, project };
     } catch (error) {
       console.error("Failed to refresh token:", error);

@@ -6,6 +6,7 @@ import messaging from "@react-native-firebase/messaging";
 import { Platform, PermissionsAndroid } from "react-native";
 import { showSurveyModal } from "./ui/showSurveyModal";
 import { isValidSearchTerm } from "./utils/searchUtils";
+import { GPTOKEN_KEY, GS_VUID_KEY, PROJECT_KEY } from "./utils/constants";
 
 class SDK {
   async init(clientId, clientSecret, options = {}) {
@@ -23,7 +24,7 @@ class SDK {
     try {
       if (typeof customerId !== "undefined") {
         await ApiService.post("/channel/login", { customerId, ...data });
-        await AsyncStorage.setItem("gsVUID", customerId);
+        await AsyncStorage.setItem(GS_VUID_KEY, customerId);
       }
       if (options.debug) {
         console.log({ customerId, ...data });
@@ -38,15 +39,15 @@ class SDK {
     try {
       await ApiService.post("/channel/logout");
       if (options.debug) {
-        console.log(await AsyncStorage.getItem("gsVUID"));
+        console.log(await AsyncStorage.getItem(GS_VUID_KEY));
       }
-      await AsyncStorage.removeItem("gsVUID");
-      await AsyncStorage.removeItem("goPersonalToken");
+      await AsyncStorage.removeItem(GS_VUID_KEY);
+      await AsyncStorage.removeItem(GPTOKEN_KEY);
       const newGsVUID = uuidv4();
       const anonId = `_gsVUUID_${newGsVUID}_${new Date().getTime()}`;
-      await AsyncStorage.setItem("gsVUID", anonId);
+      await AsyncStorage.setItem(GS_VUID_KEY, anonId);
       if (options.debug) {
-        console.log("New gsVUID:", await AsyncStorage.getItem("gsVUID"));
+        console.log("New gsVUID:", await AsyncStorage.getItem(GS_VUID_KEY));
       }
     } catch (error) {
       console.error("Logout failed:", error);
@@ -137,7 +138,7 @@ class SDK {
     try {
       const queryParams = new URLSearchParams(options).toString();
       let response;
-      const project = await AsyncStorage.getItem("project");
+      const project = await AsyncStorage.getItem(PROJECT_KEY);
 
       if (options.cache === 1) {
         if (options.debug) {
@@ -366,6 +367,10 @@ class SDK {
       console.error("Voice search failed:", error);
       throw new Error("Failed to perform voice search");
     }
+  }
+
+  async getCustomerId() {
+    return await AsyncStorage.getItem(GS_VUID_KEY);
   }
 
   isValidSearchTerm(searchTerm) {
