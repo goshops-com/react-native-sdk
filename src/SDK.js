@@ -57,9 +57,18 @@ class SDK {
 
   async search(text, options = {}) {
     try {
-      const response = await ApiService.get("/item/search", {
-        params: { query: text },
-      });
+      const params = { query: text };
+
+      // This is only for Bembos
+      if (options.rompecolas !== undefined) {
+        const jsonFilter = {
+          rompecolas: [{ value: options.rompecolas ? "1" : "0" }],
+        };
+        params.jsonFilter = JSON.stringify(jsonFilter);
+      }
+
+      const response = await ApiService.get("/item/search", { params });
+
       if (options.debug) {
         console.log("Search response:", response.data);
       }
