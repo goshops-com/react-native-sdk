@@ -58,12 +58,17 @@ class SDK {
   async search(text, options = {}) {
     try {
       const params = { query: text };
+      const jsonFilter = {};
 
-      // This is only for Bembos
-      if (options.rompecolas !== undefined) {
-        const jsonFilter = {
-          rompecolas: [{ value: options.rompecolas ? "1" : "0" }],
-        };
+      if (options.rompecolas) {
+        jsonFilter.rompecolas = [{ value: options.rompecolas ? "1" : "0" }];
+      }
+
+      if (options.store) {
+        jsonFilter.source_codes = [{ operator: "in", value: options.store }];
+      }
+
+      if (Object.keys(jsonFilter).length > 0) {
         params.jsonFilter = JSON.stringify(jsonFilter);
       }
 
