@@ -58,18 +58,9 @@ class SDK {
   async search(text, options = {}) {
     try {
       const params = { query: text };
-      const jsonFilter = {};
 
-      if (options.rompecolas) {
-        jsonFilter.rompecolas = [{ value: options.rompecolas ? "1" : "0" }];
-      }
-
-      if (options.store) {
-        jsonFilter.source_codes = [{ operator: "in", value: options.store }];
-      }
-
-      if (Object.keys(jsonFilter).length > 0) {
-        params.jsonFilter = JSON.stringify(jsonFilter);
+      if (options.jsonFilter) {
+        params.jsonFilter = JSON.stringify(options.jsonFilter);
       }
 
       const response = await ApiService.get("/item/search", { params });
