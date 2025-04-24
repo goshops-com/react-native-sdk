@@ -381,6 +381,65 @@ class SDK {
   isValidSearchTerm(searchTerm) {
     return isValidSearchTerm(searchTerm);
   }
+
+  async imageSearch(file, options = {}) {
+    try {
+      const formData = new FormData();
+      formData.append("image", {
+        uri: file?.uri ?? file,
+        name: file?.name ?? "photo.jpg", 
+        type: file?.type ?? "image/jpeg",
+      });
+
+      const searchResponse = await ApiService.post("/item/image-search", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      if (options.debug) {
+        console.log("Image search response:", searchResponse.data);
+      }
+
+      if (!searchResponse?.data?.hits) {
+        throw new Error("No search results available");
+      }
+
+      return searchResponse.data;
+
+    } catch (error) {
+      console.error("Image search failed:", error);
+      if (error.response) {
+        console.error("Image search error:", error.response.data);
+      }
+      throw new Error("Failed to perform image search");
+    }
+  }
+
+  async getAddonData(endpoint, options = {}) {
+    try {
+      const response = await ApiService.get(`/addon/live/${endpoint}`, {
+        timeout: 8000,
+        params: options.params
+      });
+
+      if (options.debug) {
+        console.log(`Addon ${endpoint} response:`, response.data);
+      }
+
+      if (response?.data) {
+        return response.data;
+      }
+
+      return [];
+
+    } catch (error) {
+      if (error.response) {
+        console.error("Addon data error:", error.response.data);
+      }
+      throw new Error("Failed to get addon data");
+    }
+  }
 }
 
 export default new SDK();

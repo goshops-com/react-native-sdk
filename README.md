@@ -47,6 +47,14 @@ Perform a search query and get results:
 const searchResults = await SDK.search('search query');
 ```
 
+### Search by Image
+
+Perform a search query using an image file:
+
+```javascript
+const imageSearchResults = await SDK.imageSearch(file);
+```
+
 ### Get Content
 
 Retrieve personalized content by content ID:
@@ -60,8 +68,17 @@ const content = await SDK.getContent('content-id');
 Retrieve Net Promoter Score content:
 
 ```javascript
-const npsContent = await SDK.getNPS();
+await SDK.addInteraction('view', { someData: 'value' });
 ```
+
+### Get Addon
+
+Retrieve data from a specific addon endpoint:
+
+```javascript
+const addonData = await SDK.getAddonData('endpoint');
+```
+
 
 ### Add Interaction
 
