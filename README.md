@@ -71,9 +71,9 @@ Retrieve Net Promoter Score content:
 await SDK.addInteraction('view', { someData: 'value' });
 ```
 
-### Solicitudes a Addons
+### Addon Methods
 
-Para interactuar con los endpoints de addons, utilice la función `requestAddonData`:
+Interact with addon endpoints.
 
 ```javascript
 const addonData = await SDK.requestAddonData('endpoint');
