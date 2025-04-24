@@ -71,14 +71,38 @@ Retrieve Net Promoter Score content:
 await SDK.addInteraction('view', { someData: 'value' });
 ```
 
-### Get Addon
+### Solicitudes a Addons
 
-Retrieve data from a specific addon endpoint:
+Para interactuar con los endpoints de addons, utilice la función `requestAddonData`:
 
 ```javascript
-const addonData = await SDK.getAddonData('endpoint');
-```
+const addonData = await SDK.requestAddonData('endpoint');
 
+const addonDataWithParams = await SDK.requestAddonData('endpoint', {
+  params: { id: 123, filter: 'active' }
+});
+
+const postResponse = await SDK.requestAddonData('endpoint', {
+  method: 'post',
+  data: { name: 'Nuevo item', status: 'active' }
+});
+
+const putResponse = await SDK.requestAddonData('endpoint', {
+  method: 'put',
+  data: { id: 123, status: 'completed' }
+});
+
+const deleteResponse = await SDK.requestAddonData('endpoint', {
+  method: 'delete',
+  params: { id: 123 }
+});
+
+const responseWithOptions = await SDK.requestAddonData('endpoint', {
+  method: 'get',
+  timeout: 5000,
+  debug: true
+});
+```
 
 ### Add Interaction
 

@@ -416,28 +416,50 @@ class SDK {
     }
   }
 
-  async getAddonData(endpoint, options = {}) {
+  async requestAddonData(endpoint, options = {}) {
     try {
-      const response = await ApiService.get(`/addon/live/${endpoint}`, {
-        timeout: 8000,
+      const method = options.method?.toLowerCase() || 'get';
+      
+      const baseUrl = `/addon/live/${endpoint}`;
+      
+      const config = {
+        timeout: options.timeout || 8000,
         params: options.params
-      });
+      };
+      
+      let response;
+      
+      switch (method) {
+        case 'post':
+          response = await ApiService.post(baseUrl, options.data || {}, config);
+          break;
+        case 'put':
+          response = await ApiService.put(baseUrl, options.data || {}, config);
+          break;
+        case 'patch':
+          response = await ApiService.patch(baseUrl, options.data || {}, config);
+          break;
+        case 'delete':
+          response = await ApiService.delete(baseUrl, config);
+          break;
+        default:
+          response = await ApiService.get(baseUrl, config);
+          break;
+      }
 
       if (options.debug) {
-        console.log(`Addon ${endpoint} response:`, response.data);
+        console.log(`Addon ${method.toUpperCase()} ${endpoint} response:`, response.data);
       }
 
-      if (response?.data) {
-        return response.data;
-      }
-
-      return [];
+      return response?.data || [];
 
     } catch (error) {
       if (error.response) {
-        console.error("Addon data error:", error.response.data);
+        console.error(`Addon data error (${options.method || 'GET'}):`, error.response.data);
+      } else {
+        console.error(`Addon data error (${options.method || 'GET'}):`, error.message);
       }
-      throw new Error("Failed to get addon data");
+      throw new Error(`Failed to ${options.method || 'get'} addon data: ${error.message}`);
     }
   }
 }
