@@ -462,6 +462,15 @@ class SDK {
       throw new Error(`Failed to ${options.method || 'get'} addon data: ${error.message}`);
     }
   }
+
+  async getGoPersonalToken() {
+    try {
+      return await AsyncStorage.getItem(GPTOKEN_KEY);
+    } catch (error) {
+      console.error("Failed to get GoPersonal token:", error);
+      throw new Error("Failed to get GoPersonal token");
+    }
+  }
 }
 
 export default new SDK();
