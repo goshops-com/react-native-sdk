@@ -344,8 +344,8 @@ class SDK {
       const formData = new FormData();
       formData.append("file", {
         uri: Platform.OS === "ios" ? file.uri : "file://" + file.uri,
-        name: Platform.OS === "ios" ? "audioIOS.m4a" : "audioAndroid.mp3",
-        type: Platform.OS === "ios" ? "audio/m4a" : "audio/mp3",
+        name: Platform.OS === "ios" ? "audioIOS.m4a" : "audioAndroid.mp4",
+        type: Platform.OS === "ios" ? "audio/m4a" : "audio/mp4",
       });
 
       const uploadResponse = await ApiService.post(
