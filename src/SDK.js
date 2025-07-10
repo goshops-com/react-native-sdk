@@ -143,10 +143,11 @@ class SDK {
       impressionStatus: "opened",
       cache: 0,
       body: {},
+      context: null,
     }
   ) {
     try {
-      const { body, cache, debug, ...queryOptions } = options;
+      const { body, cache, debug, context, ...queryOptions } = options;
       const queryParams = new URLSearchParams(queryOptions).toString();
       let response;
       const project = await AsyncStorage.getItem(PROJECT_KEY);
@@ -161,7 +162,13 @@ class SDK {
         const url = `/personal/content/${contentId}${
           queryParams ? `?${queryParams}` : ""
         }`;
-        response = await ApiService.post(url, body);
+        
+        const requestBody = { ...body };
+        if (context) {
+          requestBody.context = context;
+        }
+        
+        response = await ApiService.post(url, requestBody);
       }
 
       if (debug) {

@@ -14,11 +14,25 @@ npm install gopersonal-react-native-sdk
 
 To start using the SDK, import it into your project and initialize it with your client ID and client secret.
 
+### JavaScript Usage
+
 ```javascript
 import SDK from 'gopersonal-react-native-sdk';
 
 // Initialize the SDK
 await SDK.init('BR-your-client-id', 'your-client-secret', { debug: true });
+```
+
+### TypeScript Usage
+
+```typescript
+import SDK from 'gopersonal-react-native-sdk';
+
+// Initialize the SDK with full TypeScript support
+await SDK.init('BR-your-client-id', 'your-client-secret', { debug: true });
+
+// TypeScript will provide autocomplete and type checking
+const searchResults = await SDK.search('query', { jsonFilter: { category: 'electronics' } });
 ```
 
 ## Core Functionality

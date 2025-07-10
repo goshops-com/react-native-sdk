@@ -1,8 +1,9 @@
 {
   "name": "gopersonal-react-native-sdk",
-  "version": "0.0.42",
+  "version": "0.0.43",
   "description": "",
-  "main": "src/SDK.js",
+  "main": "index.js",
+  "types": "src/SDK.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
