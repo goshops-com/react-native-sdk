@@ -59,6 +59,10 @@ class SDK {
     try {
       const params = { query: text };
 
+      if (options.includeAllItemFields) {
+        params.includeAllItemFields = true;
+      }
+
       if (options.jsonFilter) {
         params.jsonFilter = JSON.stringify(options.jsonFilter);
       }
