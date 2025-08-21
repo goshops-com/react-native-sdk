@@ -2,13 +2,23 @@ import ApiService from "./ApiService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import "react-native-get-random-values";
 import { v4 as uuidv4 } from "uuid";
-import messaging from "@react-native-firebase/messaging";
 import { Platform, PermissionsAndroid } from "react-native";
 import { showSurveyModal } from "./ui/showSurveyModal";
 import { isValidSearchTerm } from "./utils/searchUtils";
 import { GPTOKEN_KEY, GS_VUID_KEY, PROJECT_KEY } from "./utils/constants";
 
 class SDK {
+  getMessagingModule() {
+    try {
+      // Lazy-load to avoid resolving native module at import time (Expo Go safety)
+      const firebaseMessaging = require("@react-native-firebase/messaging");
+      return typeof firebaseMessaging === "function"
+        ? firebaseMessaging
+        : firebaseMessaging.default;
+    } catch (_err) {
+      return null;
+    }
+  }
   async init(clientId, clientSecret, options = {}) {
     try {
       await ApiService.init(clientId, clientSecret);
@@ -243,6 +253,15 @@ class SDK {
 
   async initializeFirebase(options = {}) {
     try {
+      const messaging = this.getMessagingModule();
+      if (!messaging) {
+        if (options.debug) {
+          console.log(
+            "Firebase messaging not available. Skipping initialization."
+          );
+        }
+        return;
+      }
       await messaging().registerDeviceForRemoteMessages();
       if (options.debug) {
         console.log("Firebase messaging initialized");
@@ -277,6 +296,16 @@ class SDK {
         return postNotificationsAndroidStatus;
       }
 
+      const messaging = this.getMessagingModule();
+      if (!messaging) {
+        if (options.debug) {
+          console.log(
+            "Firebase messaging not available. Permission check skipped."
+          );
+        }
+        return false;
+      }
+
       const authStatus = await messaging().hasPermission();
       const enabled =
         authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
@@ -303,6 +332,15 @@ class SDK {
 
   async getFirebaseToken(options = {}) {
     try {
+      const messaging = this.getMessagingModule();
+      if (!messaging) {
+        if (options.debug) {
+          console.log(
+            "Firebase messaging not available. No token."
+          );
+        }
+        return undefined;
+      }
       const token = await messaging().getToken();
       if (options.debug) {
         console.log("Firebase token:", token);
@@ -314,6 +352,15 @@ class SDK {
   }
 
   onMessage(callback, options = {}) {
+    const messaging = this.getMessagingModule();
+    if (!messaging) {
+      if (options.debug) {
+        console.log(
+          "Firebase messaging not available. onMessage is a no-op."
+        );
+      }
+      return () => {};
+    }
     if (options.debug) {
       console.log("onMessage callback set");
     }
@@ -321,6 +368,15 @@ class SDK {
   }
 
   onNotificationOpenedApp(callback, options = {}) {
+    const messaging = this.getMessagingModule();
+    if (!messaging) {
+      if (options.debug) {
+        console.log(
+          "Firebase messaging not available. onNotificationOpenedApp is a no-op."
+        );
+      }
+      return () => {};
+    }
     if (options.debug) {
       console.log("onNotificationOpenedApp callback set");
     }
@@ -328,6 +384,15 @@ class SDK {
   }
 
   async getInitialNotification(options = {}) {
+    const messaging = this.getMessagingModule();
+    if (!messaging) {
+      if (options.debug) {
+        console.log(
+          "Firebase messaging not available. No initial notification."
+        );
+      }
+      return null;
+    }
     const notification = await messaging().getInitialNotification();
     if (options.debug) {
       console.log("Initial notification:", notification);

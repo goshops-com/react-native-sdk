@@ -144,6 +144,8 @@ await SDK.openImpression('impressionId');
 
 ## Push Notifications
 
+> Note for Expo Go users: Expo Go does not include the native Firebase Messaging module. As of this SDK version, Firebase messaging is loaded lazily and guarded, so importing the SDK features will work in Expo Go without crashing. Push-related methods will no-op if the native module is unavailable. To test or use push notifications, build a custom development client.
+
 ### Initialize Firebase
 
 Set up Firebase for push notifications:
