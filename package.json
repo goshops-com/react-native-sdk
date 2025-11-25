@@ -1,6 +1,6 @@
 {
   "name": "gopersonal-react-native-sdk",
-  "version": "0.0.45",
+  "version": "0.0.46",
   "description": "",
   "main": "index.js",
   "types": "src/SDK.d.ts",
@@ -12,8 +12,8 @@
   "license": "ISC",
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.24.0",
-    "@react-native-firebase/app": "^20.5.0",
-    "@react-native-firebase/messaging": "^20.5.0",
+    "@react-native-firebase/app": "^23.5.0",
+    "@react-native-firebase/messaging": "^23.5.0",
     "axios": "^1.7.3",
     "react-native-get-random-values": "^1.11.0",
     "uuid": "^10.0.0"
