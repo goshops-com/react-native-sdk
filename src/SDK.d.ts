@@ -54,6 +54,70 @@ declare module 'gopersonal-react-native-sdk' {
     timeout?: number;
   }
 
+  // ==================== Search API V2 Types ====================
+
+  interface SearchV2Options extends SDKOptions {
+    projectId?: string;
+    limit?: number;
+    embedding_mode?: string;
+    reranker?: string;
+    customer_id?: string;
+    filters?: Record<string, string[]>;
+  }
+
+  interface AutocompleteV2Options extends SDKOptions {
+    projectId?: string;
+  }
+
+  interface FacetsV2Options extends SDKOptions {
+    projectId?: string;
+  }
+
+  interface SearchPageV2Options extends SDKOptions {
+    page_size?: number;
+    filters?: Record<string, string[]>;
+    sort_by?: string;
+  }
+
+  interface SimilarProductsV2Options extends SDKOptions {
+    projectId?: string;
+  }
+
+  interface GetProductByIdV2Options extends SDKOptions {
+    projectId?: string;
+  }
+
+  interface ProductPayloadV2 {
+    id: string;
+    sku: string;
+    name: string;
+    description: string;
+    price: string;
+    regular_price: string;
+    category: string;
+    brand?: string;
+    color?: string;
+    url: string;
+    imgs: Array<{ url: string }>;
+    badges?: string;
+  }
+
+  interface SearchHitV2 {
+    id: string;
+    score: number;
+    payload: ProductPayloadV2;
+  }
+
+  interface SearchV2Result {
+    hits: SearchHitV2[];
+    hits_count: number;
+    filters: Record<string, string[]>;
+    facets: Record<string, { display_name: string; values: string[] }>;
+    search_id: string;
+    total_results: number;
+    is_occasion_search: boolean;
+  }
+
   interface VoiceSearchResult {
     hits: any[];
     query: string;
@@ -92,6 +156,13 @@ declare module 'gopersonal-react-native-sdk' {
     imageSearch(file: any, options?: ImageSearchOptions): Promise<ImageSearchResult>;
     requestAddonData(endpoint: string, options?: AddonDataOptions): Promise<any>;
     getGoPersonalToken(): Promise<string | null>;
+    // Search API V2
+    searchV2(query: string, options?: SearchV2Options): Promise<SearchV2Result>;
+    autocompleteV2(query: string, options?: AutocompleteV2Options): Promise<any>;
+    getFacetsV2(options?: FacetsV2Options): Promise<any>;
+    searchPageV2(searchId: string, page: number, options?: SearchPageV2Options): Promise<SearchV2Result>;
+    getSimilarProductsV2(productId: string, options?: SimilarProductsV2Options): Promise<any>;
+    getProductByIdV2(productId: string, options?: GetProductByIdV2Options): Promise<ProductPayloadV2>;
   }
 
   const SDK: SDK;

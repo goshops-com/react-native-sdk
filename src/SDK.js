@@ -553,6 +553,171 @@ class SDK {
       throw new Error("Failed to get GoPersonal token");
     }
   }
+
+  // ==================== Gopersonal Search API v2 ====================
+
+  async searchV2(query, options = {}) {
+    try {
+      const projectId = options.projectId || await AsyncStorage.getItem(PROJECT_KEY);
+      
+      const body = {
+        project_id: projectId,
+        query: query,
+        limit: options.limit || 50,
+        embedding_mode: options.embedding_mode || "gemma_bm25",
+        reranker: options.reranker || "qwen",
+      };
+
+      if (options.customer_id) {
+        body.customer_id = options.customer_id;
+      }
+      if (options.filters) {
+        body.filters = options.filters;
+      }
+
+      const response = await fetch("https://search.gopersonal.ai/search", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+      const data = await response.json();
+
+      if (options.debug) {
+        console.log("Search V2 response:", data);
+      }
+
+      return data;
+    } catch (error) {
+      console.error("Search V2 failed:", error);
+      throw new Error("Failed to search V2");
+    }
+  }
+
+  async autocompleteV2(query, options = {}) {
+    try {
+      const projectId = options.projectId || await AsyncStorage.getItem(PROJECT_KEY);
+      
+      const response = await fetch(
+        `https://discover.gopersonal.ai/public/suggestions/${projectId}?q=${encodeURIComponent(query)}`
+      );
+
+      const data = await response.json();
+
+      if (options.debug) {
+        console.log("Autocomplete V2 response:", data);
+      }
+
+      return data;
+    } catch (error) {
+      console.error("Autocomplete V2 failed:", error);
+      throw new Error("Failed to get autocomplete V2");
+    }
+  }
+
+  async getFacetsV2(options = {}) {
+    try {
+      const projectId = options.projectId || await AsyncStorage.getItem(PROJECT_KEY);
+      
+      const response = await fetch(
+        `https://search.gopersonal.ai/facets/${projectId}`
+      );
+
+      const data = await response.json();
+
+      if (options.debug) {
+        console.log("Facets V2 response:", data);
+      }
+
+      return data;
+    } catch (error) {
+      console.error("Get facets V2 failed:", error);
+      throw new Error("Failed to get facets V2");
+    }
+  }
+
+  async searchPageV2(searchId, page, options = {}) {
+    try {
+      const body = {
+        search_id: searchId,
+        page: page,
+        page_size: options.page_size || 50,
+      };
+
+      if (options.filters) {
+        body.filters = options.filters;
+      }
+      if (options.sort_by) {
+        body.sort_by = options.sort_by;
+      }
+
+      const response = await fetch("https://search.gopersonal.ai/search/page", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+      const data = await response.json();
+
+      if (options.debug) {
+        console.log("Search page V2 response:", data);
+      }
+
+      return data;
+    } catch (error) {
+      console.error("Search page V2 failed:", error);
+      throw new Error("Failed to get search page V2");
+    }
+  }
+
+  async getSimilarProductsV2(productId, options = {}) {
+    try {
+      const projectId = options.projectId || await AsyncStorage.getItem(PROJECT_KEY);
+      
+      const body = {
+        project: projectId,
+        product_id: productId,
+      };
+
+      const response = await fetch("https://search.gopersonal.ai/similar-products?rerank=true", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+      const data = await response.json();
+
+      if (options.debug) {
+        console.log("Similar products V2 response:", data);
+      }
+
+      return data;
+    } catch (error) {
+      console.error("Get similar products V2 failed:", error);
+      throw new Error("Failed to get similar products V2");
+    }
+  }
+
+  async getProductByIdV2(productId, options = {}) {
+    try {
+      const projectId = options.projectId || await AsyncStorage.getItem(PROJECT_KEY);
+      
+      const response = await fetch(
+        `https://search.gopersonal.ai/product/${projectId}/${productId}`
+      );
+
+      const data = await response.json();
+
+      if (options.debug) {
+        console.log("Get product by ID V2 response:", data);
+      }
+
+      return data;
+    } catch (error) {
+      console.error("Get product by ID V2 failed:", error);
+      throw new Error("Failed to get product by ID V2");
+    }
+  }
 }
 
 export default new SDK();
