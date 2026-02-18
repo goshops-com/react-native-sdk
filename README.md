@@ -61,6 +61,77 @@ Perform a search query and get results:
 const searchResults = await SDK.search('search query');
 ```
 
+### Search V2 (Semantic Search with AI)
+
+Use the new AI-powered semantic search with reranking:
+
+```javascript
+// Basic search
+const results = await SDK.searchV2('wireless headphones');
+
+// With options
+const results = await SDK.searchV2('wireless headphones', {
+  limit: 50,
+  embedding_mode: 'gemma_bm25',
+  reranker: 'qwen',
+  filters: { brand: ['Sony', 'Bose'], color: ['black'] }
+});
+
+// Response structure
+// {
+//   hits: [{ id, score, payload: { name, price, url, imgs, ... } }],
+//   hits_count: 50,
+//   search_id: 'abc123',
+//   total_results: 150,
+//   facets: { brand: { display_name: 'Marca', values: [...] } },
+//   is_occasion_search: false
+// }
+```
+
+### Autocomplete V2
+
+Get search suggestions while typing:
+
+```javascript
+const suggestions = await SDK.autocompleteV2('headph');
+```
+
+### Search Page V2 (Pagination)
+
+Paginate through search results using the search_id from a previous search:
+
+```javascript
+const page2 = await SDK.searchPageV2('search-id-from-previous-search', 2, {
+  page_size: 50,
+  filters: { brand: ['Sony'] },
+  sort_by: 'price-low-high'
+});
+```
+
+### Get Facets V2
+
+Get available facets/filters for the project:
+
+```javascript
+const facets = await SDK.getFacetsV2();
+```
+
+### Get Similar Products V2
+
+Get products similar to a specific product:
+
+```javascript
+const similarProducts = await SDK.getSimilarProductsV2('product-id');
+```
+
+### Get Product by ID V2
+
+Get a single product by its ID:
+
+```javascript
+const product = await SDK.getProductByIdV2('product-id');
+```
+
 ### Search by Image
 
 Perform a search query using an image file:
