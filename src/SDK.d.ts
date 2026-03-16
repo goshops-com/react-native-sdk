@@ -41,6 +41,8 @@ declare module 'gopersonal-react-native-sdk' {
 
   interface VoiceSearchOptions extends SDKOptions {
     debug?: boolean;
+    includeAllItemFields?: boolean;
+    jsonFilter?: any;
   }
 
   interface ImageSearchOptions extends SDKOptions {

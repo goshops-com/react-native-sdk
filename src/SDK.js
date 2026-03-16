@@ -438,9 +438,22 @@ class SDK {
         throw new Error("No transcription available");
       }
 
-      const searchResponse = await ApiService.get(
-        `/item/search?query=${uploadResponse.data.transcription.text.toLowerCase()}&typeOverride=voice`
-      );
+      const searchParams = {
+        query: uploadResponse.data.transcription.text.toLowerCase(),
+        typeOverride: "voice",
+      };
+
+      if (options.includeAllItemFields) {
+        searchParams.includeAllItemFields = true;
+      }
+
+      if (options.jsonFilter) {
+        searchParams.jsonFilter = JSON.stringify(options.jsonFilter);
+      }
+
+      const searchResponse = await ApiService.get("/item/search", {
+        params: searchParams,
+      });
 
       if (options.debug) {
         console.log("Voice search response:", searchResponse.data);
