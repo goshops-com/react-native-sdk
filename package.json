@@ -1,6 +1,6 @@
 {
   "name": "gopersonal-react-native-sdk",
-  "version": "0.0.48",
+  "version": "0.0.49",
   "description": "",
   "main": "index.js",
   "types": "src/SDK.d.ts",
