@@ -138,6 +138,7 @@ declare module 'gopersonal-react-native-sdk' {
     init(clientId: string, clientSecret: string, options?: SDKOptions): Promise<void>;
     login(customerId: string, data?: any, options?: LoginOptions): Promise<void>;
     logout(options?: LogoutOptions): Promise<void>;
+    getAffinityCustomer(): Promise<any | null>;
     search(text: string, options?: SearchOptions): Promise<any[]>;
     getNPS(options?: NPSSurveyOptions): Promise<NPSSurveyResult | null>;
     getContentsByContext(pageType: string, options?: SDKOptions): Promise<any>;
@@ -169,4 +170,4 @@ declare module 'gopersonal-react-native-sdk' {
 
   const SDK: SDK;
   export default SDK;
-} 
+}

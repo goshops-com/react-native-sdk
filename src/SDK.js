@@ -62,6 +62,17 @@ class SDK {
     }
   }
 
+  async getAffinityCustomer() {
+    try {
+      const response = await ApiService.get(
+        "/channel/whoiam?includeCustomer=true"
+      );
+      return response.data;
+    } catch (error) {
+      return null;
+    }
+  }
+
   async search(text, options = {}) {
     try {
       const params = { query: text };
