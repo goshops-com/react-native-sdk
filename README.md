@@ -148,6 +148,36 @@ Retrieve personalized content by content ID:
 const content = await SDK.getContent('content-id');
 ```
 
+### Personalization impressions and clicks
+
+After initializing the SDK, fetch with explicit options and register the impression
+when the personalization becomes visible:
+
+```javascript
+const content = await SDK.getContent('app-popup', {
+  itemAttributes: '*',
+  impressionStatus: 'pending',
+});
+
+// On display, for a matched variant:
+await SDK.createContentImpression(content.impressionId, {
+  content: content.experienceId,
+  target: content.targetId,
+  variantId: content.variantId,
+});
+
+// On its action, after creation completes:
+await SDK.clickContentImpression(
+  await SDK.getContentImpressionId(content.experienceId),
+  { content: content.experienceId },
+);
+```
+
+Impressions are deduplicated by project, session and content; the returned server
+ID is persisted. Closing a personalization should not call the click method.
+`getContent` options replace its defaults, so include `itemAttributes` explicitly.
+`openImpression` keeps its existing `/personal/impression` route.
+
 ### Get NPS
 
 Retrieve Net Promoter Score content:

@@ -6,6 +6,9 @@ import { Platform, PermissionsAndroid } from "react-native";
 import { showSurveyModal } from "./ui/showSurveyModal";
 import { isValidSearchTerm } from "./utils/searchUtils";
 import { GPTOKEN_KEY, GS_VUID_KEY, PROJECT_KEY } from "./utils/constants";
+import { getContentImpressionStorageKey, getCanonicalImpressionStorageKey } from "./utils/contentImpressions";
+
+const pendingContentImpressions = new Map();
 
 class SDK {
   getMessagingModule() {
@@ -257,6 +260,65 @@ class SDK {
       console.error("Failed to open impression content:", error);
       throw new Error("Failed to open impression content");
     }
+  }
+
+  async createContentImpression(impressionId, impression = {}) {
+    if (typeof impressionId !== "string" || !impressionId.trim()) return;
+
+    const contentKey = impression.content || impression.variantId || impressionId;
+    const storageKey = await getContentImpressionStorageKey(contentKey);
+    const pending = pendingContentImpressions.get(storageKey);
+    if (pending) return { ...await pending, skipped: true };
+
+    const create = async () => {
+      const storedId = await AsyncStorage.getItem(storageKey);
+      if (storedId) return { success: true, impressionId: storedId, skipped: true };
+
+      const { content, target, variantId, status = "opened", tags, date } = impression;
+      const payload = { impressionId, content, target, variantId, status, tags, date };
+      Object.keys(payload).forEach((key) => {
+        if (payload[key] === undefined) delete payload[key];
+      });
+
+      const response = await ApiService.post("/personal/impression", payload);
+      if (!response.data?.success) return response.data;
+      const createdId = response.data.impressionId || impressionId;
+      const createdKey = getCanonicalImpressionStorageKey(storageKey, createdId);
+      await AsyncStorage.setItem(createdKey, createdId);
+      return { ...response.data, impressionId: createdId };
+    };
+
+    const request = create();
+    pendingContentImpressions.set(storageKey, request);
+    try {
+      return await request;
+    } finally {
+      pendingContentImpressions.delete(storageKey);
+    }
+  }
+
+  async clickContentImpression(impressionId, impression = {}) {
+    if (typeof impressionId !== "string" || !impressionId.trim()) return;
+    const payload = { content: impression.content, tags: impression.tags };
+    Object.keys(payload).forEach((key) => {
+      if (payload[key] === undefined) delete payload[key];
+    });
+    const response = await ApiService.patch(
+      `/personal/impression/${encodeURIComponent(impressionId)}`,
+      payload
+    );
+    return response.data;
+  }
+
+  async getContentImpressionId(contentKey) {
+    if (typeof contentKey !== "string" || !contentKey) return null;
+    let storageKey = await getContentImpressionStorageKey(contentKey);
+    const pending = pendingContentImpressions.get(storageKey);
+    if (pending) {
+      await pending;
+      storageKey = await getContentImpressionStorageKey(contentKey);
+    }
+    return AsyncStorage.getItem(storageKey);
   }
 
   async initializeFirebase(options = {}) {

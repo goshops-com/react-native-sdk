@@ -31,6 +31,31 @@ declare module 'gopersonal-react-native-sdk' {
     context?: any;
   }
 
+  interface ContentImpressionOptions {
+    /** Content _id returned as experienceId by getContent. */
+    content: string;
+    target?: string;
+    variantId?: string;
+    status?: string;
+    tags?: string[];
+    date?: string | Date;
+  }
+
+  interface ContentImpressionResult {
+    success: boolean;
+    impressionId: string;
+    skipped?: boolean;
+  }
+
+  interface ClickContentImpressionOptions {
+    content?: string;
+    tags?: string[];
+  }
+
+  interface ClickContentImpressionResult {
+    success: boolean;
+  }
+
   interface InteractionOptions extends SDKOptions {
     transactionId?: string;
   }
@@ -146,6 +171,9 @@ declare module 'gopersonal-react-native-sdk' {
     addInteraction(interactionName: string, data: any, options?: SDKOptions): Promise<any>;
     addInteractionState(state: string, options?: InteractionOptions): Promise<any>;
     openImpression(impressionId: string, options?: SDKOptions): Promise<void>;
+    createContentImpression(impressionId: string, impression: ContentImpressionOptions): Promise<ContentImpressionResult | undefined>;
+    clickContentImpression(impressionId: string | null | undefined, impression?: ClickContentImpressionOptions): Promise<ClickContentImpressionResult | undefined>;
+    getContentImpressionId(contentKey: string): Promise<string | null>;
     initializeFirebase(options?: FirebaseOptions): Promise<void>;
     requestNotificationPermission(options?: FirebaseOptions): Promise<boolean>;
     getFirebaseToken(options?: FirebaseOptions): Promise<string | undefined>;
