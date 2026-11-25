@@ -13,8 +13,10 @@ const pendingContentImpressions = new Map();
 class SDK {
   getMessagingModule() {
     try {
-      // Lazy-load modular API to avoid resolving native module at import time (Expo Go safety)
-      return require("@react-native-firebase/messaging/lib/modular/index.js");
+      // Lazy-load to avoid resolving native module at import time (Expo Go safety).
+      // The package root exports the modular API in every supported version (>=20);
+      // deep paths like lib/modular/index.js only exist in 20.5–23.0.
+      return require("@react-native-firebase/messaging");
     } catch (_err) {
       return null;
     }

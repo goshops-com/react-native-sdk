@@ -17,8 +17,8 @@ function storage(initial = {}) {
   };
 }
 
-async function loadSDK({ api, baseURL, store = storage({ 'goPersonalToken-v2': token() }) } = {}) {
-  const context = vm.createContext({ console, URLSearchParams, fetch, FormData });
+async function loadSDK({ api, baseURL, store = storage({ 'goPersonalToken-v2': token() }), globals = {} } = {}) {
+  const context = vm.createContext({ console, URLSearchParams, fetch, FormData, ...globals });
   const modules = new Map();
   const mocks = {
     '@react-native-async-storage/async-storage': { default: store },
